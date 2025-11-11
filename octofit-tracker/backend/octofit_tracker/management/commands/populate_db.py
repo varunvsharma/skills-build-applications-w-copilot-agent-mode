@@ -6,12 +6,16 @@ class Command(BaseCommand):
     help = 'Populate the octofit_db database with test data'
 
     def handle(self, *args, **options):
-        # Delete all data
-        Activity.objects.all().delete()
-        User.objects.all().delete()
-        Team.objects.all().delete()
-        Workout.objects.all().delete()
-        Leaderboard.objects.all().delete()
+        # Drop all collections to avoid cascade deletion issues with Djongo
+        from pymongo import MongoClient
+        client = MongoClient('mongodb://localhost:27017/')
+        db = client['octofit_db']
+        db.drop_collection('octofit_tracker_activity')
+        db.drop_collection('octofit_tracker_user')
+        db.drop_collection('octofit_tracker_team')
+        db.drop_collection('octofit_tracker_workout')
+        db.drop_collection('octofit_tracker_leaderboard')
+        db.drop_collection('octofit_tracker_workout_suggested_for')
 
         # Create teams
         marvel = Team.objects.create(name='Marvel', description='Marvel superheroes')
