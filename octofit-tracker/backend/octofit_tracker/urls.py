@@ -30,3 +30,4 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('', views.api_root, name='api-root'),
 ]
+
